@@ -53,10 +53,11 @@ namespace bosssense::truehud
 		}
 	}
 
-	void RemoveBoss(RE::Actor* a_actor)
+	void RemoveBoss(RE::Actor* a_actor, bool a_immediate)
 	{
 		if (g_api && a_actor) {
-			g_api->RemoveBoss(a_actor->GetHandle(), TRUEHUD_API::WidgetRemovalMode::Normal);
+			g_api->RemoveBoss(a_actor->GetHandle(),
+				a_immediate ? TRUEHUD_API::WidgetRemovalMode::Immediate : TRUEHUD_API::WidgetRemovalMode::Normal);
 		}
 	}
 }

@@ -9,5 +9,5 @@ namespace bosssense::truehud
 	bool Available();
 
 	void AddBoss(RE::Actor* a_actor);
-	void RemoveBoss(RE::Actor* a_actor);
+	void RemoveBoss(RE::Actor* a_actor, bool a_immediate = false);
 }
