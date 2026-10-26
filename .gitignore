@@ -13,3 +13,6 @@ dist/**/*.pdb
 # OS
 Thumbs.db
 desktop.ini
+
+# local tools (not part of the project)
+_tools/
