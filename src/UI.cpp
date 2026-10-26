@@ -128,9 +128,9 @@ namespace bosssense::ui
 						text = DescribeTarget(target, decision.boss, decision.score, MakeSnapshot().threshold, decision.edid, decision);
 					}
 				} else if (action == PendingAction::kReevaluate) {
-					BossManager::Get().Invalidate();
-					const auto decision = BossManager::Get().EvaluateOnly(target);
+					BossManager::Get().ReevaluateAll();
 					BossManager::Get().ConsiderNow(target);
+					const auto decision = BossManager::Get().EvaluateOnly(target);
 					text = DescribeTarget(target, decision.boss, decision.score, MakeSnapshot().threshold, decision.edid, decision);
 				} else {
 					auto* base = target->GetActorBase();

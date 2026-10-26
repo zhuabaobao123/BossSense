@@ -24,6 +24,8 @@ namespace bosssense
 
 		/// Clear the per-combat decision cache so the next evaluation runs again.
 		void Invalidate();
+		/// Re-evaluate every actor that currently has a bar and remove the ones that no longer qualify.
+		void ReevaluateAll();
 		/// Evaluate and add a boss bar immediately (used by the menu).
 		void ConsiderNow(RE::Actor* a_actor);
 

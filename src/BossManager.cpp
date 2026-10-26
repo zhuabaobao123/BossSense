@@ -57,6 +57,29 @@ namespace bosssense
 		m_decided.clear();
 	}
 
+	void BossManager::ReevaluateAll()
+	{
+		m_decided.clear();
+		const auto threshold = MakeSnapshot().threshold;
+
+		std::vector<RE::FormID> tracked(m_added.begin(), m_added.end());
+		for (const auto formID : tracked) {
+			auto* actor = RE::TESForm::LookupByID<RE::Actor>(formID);
+			if (!actor) {
+				m_added.erase(formID);
+				continue;
+			}
+
+			const auto decision = Evaluate(actor);
+			if (!decision.boss) {
+				truehud::RemoveBoss(actor);
+				m_added.erase(formID);
+				SKSE::log::info("boss -{} [{:08X}] {}: score {} < {}", decision.score, formID,
+					decision.name.empty() ? "<unnamed>" : decision.name.c_str(), decision.score, threshold);
+			}
+		}
+	}
+
 	void BossManager::ConsiderNow(RE::Actor* a_actor)
 	{
 		Consider(a_actor);
@@ -68,15 +91,20 @@ namespace bosssense
 			return;
 		}
 		const auto formID = a_actor->GetFormID();
-		if (m_decided.contains(formID)) {
+		const bool alreadyAdded = m_added.contains(formID);
+
+		// Actors without a bar are decided once per combat; actors that already have a bar are
+		// re-checked on every event so a score drop can remove the bar.
+		if (!alreadyAdded && m_decided.contains(formID)) {
 			return;
 		}
 		m_decided.insert(formID);
 
+		const auto snapshot = MakeSnapshot();
 		auto decision = Evaluate(a_actor);
 
-		const bool debug = MakeSnapshot().debugLog;
-		if (debug || decision.boss) {
+		const bool debug = snapshot.debugLog;
+		if (debug || (decision.boss && !alreadyAdded) || (!decision.boss && alreadyAdded)) {
 			std::string reasons;
 			for (int i = 0; i < decision.hitCount; ++i) {
 				if (!reasons.empty()) {
@@ -86,17 +114,28 @@ namespace bosssense
 			}
 
 			const char* name = decision.name.empty() ? "<unnamed>" : decision.name.c_str();
-			if (decision.boss) {
+			if (decision.boss && !alreadyAdded) {
 				SKSE::log::info("boss +{} [{:08X}] base={:08X} {} ({}): {}", decision.score, formID, decision.baseID, name,
 					decision.edid.empty() ? "-" : decision.edid.c_str(), reasons);
+			} else if (!decision.boss && alreadyAdded) {
+				SKSE::log::info("boss -{} [{:08X}] base={:08X} {}: score {} < {} ({})", decision.score, formID, decision.baseID, name,
+					decision.score, snapshot.threshold, reasons.empty() ? "no signal" : reasons.c_str());
 			} else if (debug) {
 				SKSE::log::info("skip {} [{:08X}] base={:08X} {}: score {} < {} ({})", name, formID, decision.baseID,
 					decision.edid.empty() ? "-" : decision.edid.c_str(), decision.score,
-					MakeSnapshot().threshold, reasons.empty() ? "no signal" : reasons.c_str());
+					snapshot.threshold, reasons.empty() ? "no signal" : reasons.c_str());
 			}
 		}
 
 		if (!decision.boss) {
+			if (alreadyAdded) {
+				truehud::RemoveBoss(a_actor);
+				m_added.erase(formID);
+			}
+			return;
+		}
+
+		if (alreadyAdded) {
 			return;
 		}
 
