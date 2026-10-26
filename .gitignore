@@ -16,3 +16,6 @@ desktop.ini
 
 # local tools (not part of the project)
 _tools/
+
+# release staging (contains DLL/PDB/ZIP)
+dist/release/

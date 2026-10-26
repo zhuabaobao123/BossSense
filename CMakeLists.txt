@@ -42,6 +42,7 @@ set(SOURCES
     src/BossManager.cpp
     src/Localization.cpp
     src/UI.cpp
+    src/version.rc
 )
 
 add_library(bosssense_miniz STATIC
