@@ -1,0 +1,15 @@
+build/
+lib/
+_ref/
+.vs/
+*.user
+*.bak
+*.bak.*
+
+# build outputs that may be staged under dist/
+dist/**/*.dll
+dist/**/*.pdb
+
+# OS
+Thumbs.db
+desktop.ini
