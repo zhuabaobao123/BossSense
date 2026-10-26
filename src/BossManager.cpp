@@ -61,52 +61,26 @@ namespace bosssense
 	{
 		m_decided.clear();
 
-		auto* lists = RE::ProcessLists::GetSingleton();
-		if (!lists) {
-			m_added.clear();
-			return;
-		}
-
-		std::vector<RE::Actor*> actors;
-		auto collect = [&actors](RE::BSTArray<RE::ActorHandle>& a_handles) {
-			for (auto& handle : a_handles) {
-				if (auto* actor = handle.get().get()) {
-					actors.push_back(actor);
-				}
-			}
-		};
-		collect(lists->highActorHandles);
-		collect(lists->middleHighActorHandles);
-		collect(lists->middleLowActorHandles);
-		collect(lists->lowActorHandles);
-
-		// Clear every boss bar for nearby actors first, including bars TrueHUD added from its own
-		// INI lists. RemoveBoss is a no-op when the actor has no boss bar.
-		for (auto* actor : actors) {
-			truehud::RemoveBoss(actor, true);
-		}
-		m_added.clear();
-
-		// Rebuild strictly from the current rules.
-		for (auto* actor : actors) {
-			if (!actor || actor->IsDead()) {
+		// Only touch actors we added a bar for. ProcessLists is the whole world, not "nearby",
+		// so iterating it would add bars to thousands of actors.
+		std::vector<RE::FormID> tracked(m_added.begin(), m_added.end());
+		for (const auto formID : tracked) {
+			auto* actor = RE::TESForm::LookupByID<RE::Actor>(formID);
+			if (!actor) {
+				m_added.erase(formID);
 				continue;
 			}
-			auto decision = Evaluate(actor);
+
+			const auto decision = Evaluate(actor);
 			if (!decision.boss) {
-				continue;
+				truehud::RemoveBoss(actor, true);
+				m_added.erase(formID);
+				SKSE::log::info("boss -{} [{:08X}] {}: score {} < {}", decision.score, formID,
+					decision.name.empty() ? "<unnamed>" : decision.name.c_str(), decision.score, decision.threshold);
 			}
-
-			const auto formID = actor->GetFormID();
-			m_added.insert(formID);
-			truehud::AddBoss(actor);
-
-			SKSE::log::info("boss +{} [{:08X}] base={:08X} {} ({}): re-evaluated", decision.score, formID,
-				decision.baseID, decision.name.empty() ? "<unnamed>" : decision.name.c_str(),
-				decision.edid.empty() ? "-" : decision.edid.c_str());
 		}
 
-		SKSE::log::info("re-evaluated {} nearby actors, {} boss bars", actors.size(), m_added.size());
+		SKSE::log::info("re-evaluated {} tracked boss bars, {} left", tracked.size(), m_added.size());
 	}
 
 	void BossManager::ConsiderNow(RE::Actor* a_actor)
@@ -148,11 +122,11 @@ namespace bosssense
 					decision.edid.empty() ? "-" : decision.edid.c_str(), reasons);
 			} else if (!decision.boss && alreadyAdded) {
 				SKSE::log::info("boss -{} [{:08X}] base={:08X} {}: score {} < {} ({})", decision.score, formID, decision.baseID, name,
-					decision.score, snapshot.threshold, reasons.empty() ? "no signal" : reasons.c_str());
+					decision.score, decision.threshold, reasons.empty() ? "no signal" : reasons.c_str());
 			} else if (debug) {
 				SKSE::log::info("skip {} [{:08X}] base={:08X} {}: score {} < {} ({})", name, formID, decision.baseID,
 					decision.edid.empty() ? "-" : decision.edid.c_str(), decision.score,
-					snapshot.threshold, reasons.empty() ? "no signal" : reasons.c_str());
+					decision.threshold, reasons.empty() ? "no signal" : reasons.c_str());
 			}
 		}
 

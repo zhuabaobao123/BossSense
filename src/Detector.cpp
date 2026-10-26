@@ -183,6 +183,7 @@ namespace bosssense
 		}
 
 		d.boss = d.score >= s.threshold;
+		d.threshold = s.threshold;
 		return d;
 	}
 }

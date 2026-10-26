@@ -17,6 +17,7 @@ namespace bosssense
 
 		bool        boss = false;
 		int         score = 0;
+		int         threshold = 0;
 		std::array<Hit, 10> hits{};
 		int         hitCount = 0;
 
