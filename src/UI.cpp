@@ -52,6 +52,26 @@ namespace bosssense::ui
 			return buffer;
 		}
 
+		/// Dynamic templates (FFxxxxxx) have no plugin file, so fall back to the leveled
+		/// original/template base, which is a real plugin form.
+		RE::TESForm* PersistentBase(RE::Actor* a_actor)
+		{
+			auto* base = a_actor->GetActorBase();
+			if (base && base->GetFile(0)) {
+				return base;
+			}
+			if (auto* extra = static_cast<RE::ExtraLeveledCreature*>(
+					a_actor->extraList.GetByType(RE::ExtraDataType::kLeveledCreature))) {
+				if (extra->originalBase && extra->originalBase->GetFile(0)) {
+					return extra->originalBase;
+				}
+				if (extra->templateBase && extra->templateBase->GetFile(0)) {
+					return extra->templateBase;
+				}
+			}
+			return base;
+		}
+
 		RE::Actor* CrosshairTarget()
 		{
 			auto* pick = RE::CrosshairPickData::GetSingleton();
@@ -96,6 +116,9 @@ namespace bosssense::ui
 					text += "+";
 				}
 				text += a_decision.hits[i].name;
+				text += "(";
+				text += std::to_string(a_decision.hits[i].weight);
+				text += ")";
 			}
 			text += "]";
 			return text;
@@ -125,28 +148,38 @@ namespace bosssense::ui
 						text = std::string(target->GetName() ? target->GetName() : "?") + "  " + _T("not hostile - ignored");
 					} else {
 						const auto decision = BossManager::Get().EvaluateOnly(target);
-						text = DescribeTarget(target, decision.boss, decision.score, MakeSnapshot().threshold, decision.edid, decision);
+						text = DescribeTarget(target, decision.boss, decision.score, decision.threshold, decision.edid, decision);
 					}
 				} else if (action == PendingAction::kReevaluate) {
 					BossManager::Get().ReevaluateAll();
 					BossManager::Get().ConsiderNow(target);
 					const auto decision = BossManager::Get().EvaluateOnly(target);
-					text = DescribeTarget(target, decision.boss, decision.score, MakeSnapshot().threshold, decision.edid, decision);
+					text = DescribeTarget(target, decision.boss, decision.score, decision.threshold, decision.edid, decision);
 				} else {
-					auto* base = target->GetActorBase();
-					const auto entry = FormEntry(base);
+					auto* form = PersistentBase(target);
+					const auto entry = FormEntry(form);
 					if (entry.empty()) {
-						text = _T("Could not resolve the base NPC.");
+						std::lock_guard lock(SettingsMutex());
+						auto& cfg = MutableSettings();
+						if (form) {
+							if (action == PendingAction::kBlacklist) {
+								cfg.blacklist.insert(form->GetFormID());
+							} else {
+								cfg.whitelist.insert(form->GetFormID());
+							}
+						}
+						cfg.dirty = true;
+						text = _T("Dynamic template - this override lasts only until the game restarts.");
 					} else {
 						std::lock_guard lock(SettingsMutex());
 						auto& cfg = MutableSettings();
 						if (action == PendingAction::kBlacklist) {
 							cfg.blacklistForms.push_back(entry);
-							cfg.blacklist.insert(base->GetFormID());
+							cfg.blacklist.insert(form->GetFormID());
 							text = std::string(_T("Blacklisted: ")) + entry;
 						} else {
 							cfg.whitelistForms.push_back(entry);
-							cfg.whitelist.insert(base->GetFormID());
+							cfg.whitelist.insert(form->GetFormID());
 							text = std::string(_T("Whitelisted: ")) + entry;
 						}
 						cfg.dirty = true;

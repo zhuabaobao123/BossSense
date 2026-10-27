@@ -41,5 +41,6 @@
   "+%d pts": "+%d pts",
   "=> BOSS": "=> BOSS",
   "=> not boss": "=> not boss",
-  "score": "score"
+  "score": "score",
+  "Dynamic template - this override lasts only until the game restarts.": "Dynamic template - this override lasts only until the game restarts."
 }

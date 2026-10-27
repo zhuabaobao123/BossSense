@@ -41,5 +41,6 @@
   "+%d pts": "+%d pt",
   "=> BOSS": "=> ボス",
   "=> not boss": "=> ボスではない",
-  "score": "スコア"
+  "score": "スコア",
+  "Dynamic template - this override lasts only until the game restarts.": "動的テンプレート — この設定はゲームを再起動するまで有効です。"
 }

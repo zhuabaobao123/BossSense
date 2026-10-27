@@ -41,5 +41,6 @@
   "+%d pts": "+%d 分",
   "=> BOSS": "=> Boss",
   "=> not boss": "=> 不是 Boss",
-  "score": "得分"
+  "score": "得分",
+  "Dynamic template - this override lasts only until the game restarts.": "动态模板：该设置仅在本次游戏有效。"
 }

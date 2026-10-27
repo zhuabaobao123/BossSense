@@ -41,5 +41,6 @@
   "+%d pts": "+%d очк.",
   "=> BOSS": "=> БОСС",
   "=> not boss": "=> не босс",
-  "score": "счёт"
+  "score": "счёт",
+  "Dynamic template - this override lasts only until the game restarts.": "Динамический шаблон — настройка действует только до перезапуска игры."
 }

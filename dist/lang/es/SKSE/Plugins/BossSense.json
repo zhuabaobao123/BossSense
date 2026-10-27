@@ -41,5 +41,6 @@
   "+%d pts": "+%d pts",
   "=> BOSS": "=> JEFE",
   "=> not boss": "=> no es jefe",
-  "score": "puntuación"
+  "score": "puntuación",
+  "Dynamic template - this override lasts only until the game restarts.": "Plantilla dinámica — este ajuste solo dura hasta reiniciar el juego."
 }

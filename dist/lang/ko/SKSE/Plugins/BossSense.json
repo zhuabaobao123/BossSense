@@ -41,5 +41,6 @@
   "+%d pts": "+%d점",
   "=> BOSS": "=> 보스",
   "=> not boss": "=> 보스 아님",
-  "score": "점수"
+  "score": "점수",
+  "Dynamic template - this override lasts only until the game restarts.": "동적 템플릿 — 이 설정은 게임을 다시 시작할 때까지 유효합니다."
 }

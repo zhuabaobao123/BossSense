@@ -41,5 +41,6 @@
   "+%d pts": "+%d Pkt.",
   "=> BOSS": "=> BOSS",
   "=> not boss": "=> kein Boss",
-  "score": "Punktzahl"
+  "score": "Punktzahl",
+  "Dynamic template - this override lasts only until the game restarts.": "Dynamische Vorlage — diese Einstellung gilt nur bis zum Neustart des Spiels."
 }
