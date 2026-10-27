@@ -43,9 +43,9 @@
 | NotLeveled | 20 | 不是从 `Lvl...` 随机刷怪列表生成（手工放置/任务指定） |
 | Unique | 20 | NPC_ 带 Unique 标记 |
 | Level | 20 | 等级 ≥ 玩家等级 + `LevelDelta` |
-| Health | 20 | 最大生命 ≥ `HealthMin` |
+| Health | 0（默认关） | 最大生命 ≥ `HealthMin` |
 | Aidt | 10 | 侵略性 ≥ 非常激进 且 自信 = 鲁莽（原脚本的规则 B） |
-| Named | 10 | 有名字 |
+| Named | 0（默认关） | 有名字 |
 
 硬排除：玩家、死亡、随从/队友、玩家召唤物、所有召唤物、非敌对（可关）、贫血中的 Essential。
 

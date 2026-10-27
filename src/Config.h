@@ -32,9 +32,9 @@ namespace bosssense
 		Signal edid{ true, 90 };
 		Signal unique{ true, 20 };
 		Signal level{ true, 20 };
-		Signal health{ true, 20 };
+		Signal health{ true, 0 };
 		Signal aidt{ true, 10 };
-		Signal named{ true, 10 };
+		Signal named{ true, 0 };
 		Signal custom{ true, 25 };
 		Signal notLeveled{ true, 20 };
 
