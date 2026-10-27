@@ -18,7 +18,7 @@ namespace bosssense
 		bool        boss = false;
 		int         score = 0;
 		int         threshold = 0;
-		std::array<Hit, 10> hits{};
+		std::array<Hit, 16> hits{};
 		int         hitCount = 0;
 
 		RE::FormID  baseID = 0;

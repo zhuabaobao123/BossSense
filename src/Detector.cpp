@@ -36,6 +36,7 @@ namespace bosssense
 	{
 		Decision d;
 		const auto s = MakeSnapshot();
+		d.threshold = s.threshold;
 		if (!s.enabled) {
 			return d;
 		}
@@ -98,7 +99,9 @@ namespace bosssense
 
 		auto add = [&d](const char* a_name, const Signal& a_signal) {
 			if (a_signal.enabled && a_signal.weight > 0) {
-				d.hits[d.hitCount++] = { a_name, a_signal.weight };
+				if (d.hitCount < static_cast<int>(d.hits.size())) {
+					d.hits[d.hitCount++] = { a_name, a_signal.weight };
+				}
 				d.score += a_signal.weight;
 			}
 		};
@@ -183,7 +186,6 @@ namespace bosssense
 		}
 
 		d.boss = d.score >= s.threshold;
-		d.threshold = s.threshold;
 		return d;
 	}
 }
