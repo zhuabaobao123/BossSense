@@ -88,6 +88,18 @@ namespace bosssense
 		Consider(a_actor);
 	}
 
+	void BossManager::RemoveTracked(RE::Actor* a_actor)
+	{
+		if (!a_actor) {
+			return;
+		}
+		const auto formID = a_actor->GetFormID();
+		truehud::RemoveBoss(a_actor, true);
+		m_added.erase(formID);
+		m_decided.erase(formID);
+		SKSE::log::info("boss - [{:08X}] removed by blacklist", formID);
+	}
+
 	void BossManager::Consider(RE::Actor* a_actor)
 	{
 		if (!a_actor) {

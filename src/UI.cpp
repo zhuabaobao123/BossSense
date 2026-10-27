@@ -214,31 +214,48 @@ namespace bosssense::ui
 				} else {
 					auto* form = PersistentBase(target);
 					const auto entry = FormEntry(form);
+					bool blacklisted = false;
+					bool whitelisted = false;
 					if (entry.empty()) {
-						std::lock_guard lock(SettingsMutex());
-						auto& cfg = MutableSettings();
-						if (form) {
-							if (action == PendingAction::kBlacklist) {
-								cfg.blacklist.insert(form->GetFormID());
-							} else {
-								cfg.whitelist.insert(form->GetFormID());
+						{
+							std::lock_guard lock(SettingsMutex());
+							auto& cfg = MutableSettings();
+							if (form) {
+								if (action == PendingAction::kBlacklist) {
+									cfg.blacklist.insert(form->GetFormID());
+									blacklisted = true;
+								} else {
+									cfg.whitelist.insert(form->GetFormID());
+									whitelisted = true;
+								}
 							}
+							cfg.dirty = true;
 						}
-						cfg.dirty = true;
 						text = _T("Dynamic template - this override lasts only until the game restarts.");
 					} else {
-						std::lock_guard lock(SettingsMutex());
-						auto& cfg = MutableSettings();
-						if (action == PendingAction::kBlacklist) {
-							cfg.blacklistForms.push_back(entry);
-							cfg.blacklist.insert(form->GetFormID());
-							text = std::string(_T("Blacklisted: ")) + entry;
-						} else {
-							cfg.whitelistForms.push_back(entry);
-							cfg.whitelist.insert(form->GetFormID());
-							text = std::string(_T("Whitelisted: ")) + entry;
+						{
+							std::lock_guard lock(SettingsMutex());
+							auto& cfg = MutableSettings();
+							if (action == PendingAction::kBlacklist) {
+								cfg.blacklistForms.push_back(entry);
+								cfg.blacklist.insert(form->GetFormID());
+								blacklisted = true;
+								text = std::string(_T("Blacklisted: ")) + entry;
+							} else {
+								cfg.whitelistForms.push_back(entry);
+								cfg.whitelist.insert(form->GetFormID());
+								whitelisted = true;
+								text = std::string(_T("Whitelisted: ")) + entry;
+							}
+							cfg.dirty = true;
 						}
-						cfg.dirty = true;
+					}
+
+					// Apply immediately: a blacklisted actor loses its bar now, a whitelisted one gets it now.
+					if (blacklisted) {
+						BossManager::Get().RemoveTracked(target);
+					} else if (whitelisted) {
+						BossManager::Get().ConsiderNow(target);
 					}
 				}
 
@@ -354,6 +371,8 @@ namespace bosssense::ui
 				g_result = _T("Settings saved.");
 			}
 
+			const auto now = std::chrono::steady_clock::now();
+
 			if (changed) {
 				{
 					std::lock_guard lock(SettingsMutex());
@@ -361,11 +380,16 @@ namespace bosssense::ui
 					global = s;
 					global.dirty = true;
 				}
-				lastChange = std::chrono::steady_clock::now();
+				lastChange = now;
 				needReeval = true;
-			}
 
-			const auto now = std::chrono::steady_clock::now();
+				// Refresh the displayed score while a slider is being dragged.
+				static auto lastTest = std::chrono::steady_clock::now();
+				if (now - lastTest > std::chrono::milliseconds(100)) {
+					g_pendingAction = static_cast<int>(PendingAction::kTest);
+					lastTest = now;
+				}
+			}
 
 			// Settings changed: clear the per-combat decision cache and re-check the target.
 			if (needReeval && now - lastChange > std::chrono::milliseconds(700)) {

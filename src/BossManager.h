@@ -28,6 +28,8 @@ namespace bosssense
 		void ReevaluateAll();
 		/// Evaluate and add a boss bar immediately (used by the menu).
 		void ConsiderNow(RE::Actor* a_actor);
+		/// Remove the bar and tracked state for one actor (used when it is blacklisted).
+		void RemoveTracked(RE::Actor* a_actor);
 
 		// Test hook for the menu: evaluate without adding.
 		Decision EvaluateOnly(RE::Actor* a_actor);
