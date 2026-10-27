@@ -95,6 +95,14 @@ Whitelist = SomeBossMod.esp:0x0012AB
 Blacklist = SomeMod.esp:0x0034CD
 ```
 
+移除已有条目（加载时先应用名单，再按 `Remove*` 移除，并从原始列表删掉，菜单保存不会写回）：
+
+```ini
+[Lists]
+RemoveBlacklist = SomeMod.esp:0x001234
+RemoveWhitelist = SomeMod.esp:0x005678
+```
+
 ## 从旧版迁移
 
 旧的 `TrueHUD_missing_bosses.ini` 里那一千多条是"EDID 含 Boss + AIDT"的并集，

@@ -115,6 +115,8 @@ namespace bosssense
 			ReadList(ini, "BossRace", g_settings.raceForms);
 			ReadList(ini, "Blacklist", g_settings.blacklistForms);
 			ReadList(ini, "Whitelist", g_settings.whitelistForms);
+			ReadList(ini, "RemoveBlacklist", g_settings.removeBlacklistForms);
+			ReadList(ini, "RemoveWhitelist", g_settings.removeWhitelistForms);
 
 			if (g_settings.raceForms.empty()) {
 				Settings defaults;
@@ -198,6 +200,8 @@ namespace bosssense
 			WriteList(ini, "BossRace", g_settings.raceForms);
 			WriteList(ini, "Blacklist", g_settings.blacklistForms);
 			WriteList(ini, "Whitelist", g_settings.whitelistForms);
+			WriteList(ini, "RemoveBlacklist", g_settings.removeBlacklistForms);
+			WriteList(ini, "RemoveWhitelist", g_settings.removeWhitelistForms);
 
 			std::error_code ec;
 			std::filesystem::create_directories(std::filesystem::path(kConfigPath).parent_path(), ec);
@@ -219,12 +223,13 @@ namespace bosssense
 	{
 		std::lock_guard lock(g_mutex);
 
-		auto resolve = [](const std::vector<std::string>& a_entries, std::unordered_set<RE::FormID>& a_out) {
+		auto* dataHandler = RE::TESDataHandler::GetSingleton();
+		if (!dataHandler) {
+			return;
+		}
+
+		auto resolve = [dataHandler](const std::vector<std::string>& a_entries, std::unordered_set<RE::FormID>& a_out) {
 			a_out.clear();
-			auto* dataHandler = RE::TESDataHandler::GetSingleton();
-			if (!dataHandler) {
-				return;
-			}
 			for (const auto& entry : a_entries) {
 				const auto split = entry.find(':');
 				if (split == std::string::npos) {
@@ -251,6 +256,33 @@ namespace bosssense
 		resolve(g_settings.raceForms, g_settings.bossRaces);
 		resolve(g_settings.blacklistForms, g_settings.blacklist);
 		resolve(g_settings.whitelistForms, g_settings.whitelist);
+
+		// [Lists] RemoveBlacklist / RemoveWhitelist: applied after loading, and removed from the
+		// raw list too so a menu save does not write them back.
+		auto applyRemovals = [&](const std::vector<std::string>& a_remove,
+			std::unordered_set<RE::FormID>& a_target, std::vector<std::string>& a_raw) {
+			std::unordered_set<RE::FormID> removeIDs;
+			resolve(a_remove, removeIDs);
+			for (const auto id : removeIDs) {
+				a_target.erase(id);
+			}
+			std::erase_if(a_raw, [&](const std::string& entry) {
+				const auto split = entry.find(':');
+				if (split == std::string::npos) {
+					return false;
+				}
+				RE::FormID local = 0;
+				try {
+					local = static_cast<RE::FormID>(std::stoul(entry.substr(split + 1), nullptr, 0));
+				} catch (...) {
+					return false;
+				}
+				const auto* form = dataHandler->LookupForm(local, entry.substr(0, split));
+				return form && removeIDs.contains(form->GetFormID());
+			});
+		};
+		applyRemovals(g_settings.removeBlacklistForms, g_settings.blacklist, g_settings.blacklistForms);
+		applyRemovals(g_settings.removeWhitelistForms, g_settings.whitelist, g_settings.whitelistForms);
 
 		SKSE::log::info("forms resolved: {} boss races, {} blacklist, {} whitelist",
 			g_settings.bossRaces.size(), g_settings.blacklist.size(), g_settings.whitelist.size());

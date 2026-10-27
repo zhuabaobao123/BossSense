@@ -42,6 +42,8 @@ namespace bosssense
 		std::vector<std::string> raceForms;
 		std::vector<std::string> blacklistForms;
 		std::vector<std::string> whitelistForms;
+		std::vector<std::string> removeBlacklistForms;
+		std::vector<std::string> removeWhitelistForms;
 
 		// Resolved forms
 		std::unordered_set<RE::FormID> bossRaces;
