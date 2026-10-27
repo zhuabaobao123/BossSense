@@ -25,6 +25,7 @@ namespace bosssense
 
 		int   threshold = 70;
 		int   levelDelta = 5;
+		int   levelMin = 30;
 		float healthMin = 400.0f;
 
 		Signal race{ true, 100 };
@@ -32,6 +33,7 @@ namespace bosssense
 		Signal edid{ true, 90 };
 		Signal unique{ true, 20 };
 		Signal level{ true, 20 };
+		Signal highLevel{ true, 15 };
 		Signal health{ true, 0 };
 		Signal aidt{ true, 10 };
 		Signal named{ true, 0 };
@@ -62,6 +64,7 @@ namespace bosssense
 		bool  debugLog = false;
 		int   threshold = 70;
 		int   levelDelta = 5;
+		int   levelMin = 30;
 		float healthMin = 400.0f;
 
 		Signal race;
@@ -69,6 +72,7 @@ namespace bosssense
 		Signal edid;
 		Signal unique;
 		Signal level;
+		Signal highLevel;
 		Signal health;
 		Signal aidt;
 		Signal named;

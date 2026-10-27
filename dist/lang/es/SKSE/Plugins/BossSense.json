@@ -45,5 +45,7 @@
   "Dynamic template - this override lasts only until the game restarts.": "Plantilla dinámica — este ajuste solo dura hasta reiniciar el juego.",
   "Remove from lists": "Quitar de las listas",
   "Removed from lists: ": "Eliminado de las listas: ",
-  "Target is not in either list.": "El objetivo no está en ninguna lista."
+  "Target is not in either list.": "El objetivo no está en ninguna lista.",
+  "High absolute level": "Nivel absoluto alto",
+  "Min level": "Nivel mínimo"
 }

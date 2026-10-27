@@ -45,5 +45,7 @@
   "Dynamic template - this override lasts only until the game restarts.": "Динамический шаблон — настройка действует только до перезапуска игры.",
   "Remove from lists": "Удалить из списков",
   "Removed from lists: ": "Удалено из списков: ",
-  "Target is not in either list.": "Цель отсутствует в обоих списках."
+  "Target is not in either list.": "Цель отсутствует в обоих списках.",
+  "High absolute level": "Высокий абсолютный уровень",
+  "Min level": "Мин. уровень"
 }

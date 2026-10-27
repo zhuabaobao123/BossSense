@@ -306,11 +306,13 @@ namespace bosssense::ui
 				changed |= SignalRow(_T("Not from a leveled list"), &s.notLeveled);
 				changed |= SignalRow(_T("Unique flag"), &s.unique);
 				changed |= SignalRow(_T("Level above player"), &s.level);
+				changed |= SignalRow(_T("High absolute level"), &s.highLevel);
 				changed |= SignalRow(_T("Large health pool"), &s.health);
 				changed |= SignalRow(_T("Aggressive + foolhardy (AIDT)"), &s.aidt);
 				changed |= SignalRow(_T("Has a name"), &s.named);
 
 				changed |= ImGui::SliderInt(_T("Level delta"), &s.levelDelta, 0, 40);
+				changed |= ImGui::SliderInt(_T("Min level"), &s.levelMin, 0, 150);
 				changed |= ImGui::SliderFloat(_T("Min max-health"), &s.healthMin, 50.0f, 3000.0f, "%.0f");
 			}
 

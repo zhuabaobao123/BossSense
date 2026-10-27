@@ -45,5 +45,7 @@
   "Dynamic template - this override lasts only until the game restarts.": "Modèle dynamique — ce réglage ne dure que jusqu au redémarrage du jeu.",
   "Remove from lists": "Retirer des listes",
   "Removed from lists: ": "Retiré des listes : ",
-  "Target is not in either list.": "La cible n est dans aucune liste."
+  "Target is not in either list.": "La cible n est dans aucune liste.",
+  "High absolute level": "Niveau absolu élevé",
+  "Min level": "Niveau min."
 }

@@ -162,6 +162,13 @@ namespace bosssense
 			}
 		}
 
+		// 5b. High absolute level (large quest mods keep fixed high-level bosses)
+		if (s.highLevel.enabled && s.highLevel.weight > 0) {
+			if (a_actor->GetLevel() >= s.levelMin) {
+				add("highLevel", s.highLevel);
+			}
+		}
+
 		// 6. Health pool
 		if (s.health.enabled && s.health.weight > 0) {
 			if (a_actor->GetActorValueMax(RE::ActorValue::kHealth) >= s.healthMin) {

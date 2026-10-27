@@ -45,5 +45,7 @@
   "Dynamic template - this override lasts only until the game restarts.": "Dynamic template - this override lasts only until the game restarts.",
   "Remove from lists": "Remove from lists",
   "Removed from lists: ": "Removed from lists: ",
-  "Target is not in either list.": "Target is not in either list."
+  "Target is not in either list.": "Target is not in either list.",
+  "High absolute level": "High absolute level",
+  "Min level": "Min level"
 }

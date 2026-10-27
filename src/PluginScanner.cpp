@@ -198,7 +198,12 @@ namespace bosssense::scanner
 			const bool edidBoss = ContainsBoss(a_npc.edid);
 			const bool customName = IsCustomName(a_npc.edid);
 
-			const RE::FormID runtimeID = a_dataHandler->LookupFormID(a_header.formID, a_file->GetFilename());
+			// TESFile::GetRuntimeFormID is the engine's own mapping (handles ESL/ESPFE and
+			// load-index differences); LookupFormID is only the fallback.
+			RE::FormID runtimeID = a_file->GetRuntimeFormID(a_header.formID);
+			if (runtimeID == 0) {
+				runtimeID = a_dataHandler->LookupFormID(a_header.formID, a_file->GetFilename());
+			}
 			if (runtimeID == 0) {
 				++a_stats.lookupMiss;
 				return;

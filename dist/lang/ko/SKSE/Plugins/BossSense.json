@@ -45,5 +45,7 @@
   "Dynamic template - this override lasts only until the game restarts.": "동적 템플릿 — 이 설정은 게임을 다시 시작할 때까지 유효합니다.",
   "Remove from lists": "목록에서 제거",
   "Removed from lists: ": "목록에서 제거됨: ",
-  "Target is not in either list.": "대상이 어느 목록에도 없습니다."
+  "Target is not in either list.": "대상이 어느 목록에도 없습니다.",
+  "High absolute level": "높은 절대 레벨",
+  "Min level": "최소 레벨"
 }

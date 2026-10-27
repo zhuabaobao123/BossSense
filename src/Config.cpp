@@ -92,6 +92,7 @@ namespace bosssense
 
 			g_settings.threshold  = static_cast<int>(ini.GetLongValue("Thresholds", "Threshold", g_settings.threshold));
 			g_settings.levelDelta = static_cast<int>(ini.GetLongValue("Thresholds", "LevelDelta", g_settings.levelDelta));
+			g_settings.levelMin   = static_cast<int>(ini.GetLongValue("Thresholds", "LevelMin", g_settings.levelMin));
 			g_settings.healthMin  = static_cast<float>(ini.GetDoubleValue("Thresholds", "HealthMin", g_settings.healthMin));
 
 			auto readSignal = [&](const char* a_key, Signal& a_sig) {
@@ -103,6 +104,7 @@ namespace bosssense
 			readSignal("Edid", g_settings.edid);
 			readSignal("Unique", g_settings.unique);
 			readSignal("Level", g_settings.level);
+			readSignal("HighLevel", g_settings.highLevel);
 			readSignal("Health", g_settings.health);
 			readSignal("Aidt", g_settings.aidt);
 			readSignal("Named", g_settings.named);
@@ -148,6 +150,7 @@ namespace bosssense
 		s.debugLog      = g_settings.debugLog;
 		s.threshold     = g_settings.threshold;
 		s.levelDelta    = g_settings.levelDelta;
+		s.levelMin      = g_settings.levelMin;
 		s.healthMin     = g_settings.healthMin;
 		s.race          = g_settings.race;
 		s.locRef        = g_settings.locRef;
@@ -156,6 +159,7 @@ namespace bosssense
 		s.notLeveled    = g_settings.notLeveled;
 		s.unique        = g_settings.unique;
 		s.level         = g_settings.level;
+		s.highLevel     = g_settings.highLevel;
 		s.health        = g_settings.health;
 		s.aidt          = g_settings.aidt;
 		s.named         = g_settings.named;
@@ -186,6 +190,7 @@ namespace bosssense
 
 			ini.SetLongValue("Thresholds", "Threshold", g_settings.threshold);
 			ini.SetLongValue("Thresholds", "LevelDelta", g_settings.levelDelta);
+			ini.SetLongValue("Thresholds", "LevelMin", g_settings.levelMin);
 			ini.SetDoubleValue("Thresholds", "HealthMin", g_settings.healthMin);
 
 			ini.SetLongValue("Weights", "Race", g_settings.race.enabled ? g_settings.race.weight : 0);
@@ -193,6 +198,7 @@ namespace bosssense
 			ini.SetLongValue("Weights", "Edid", g_settings.edid.enabled ? g_settings.edid.weight : 0);
 			ini.SetLongValue("Weights", "Unique", g_settings.unique.enabled ? g_settings.unique.weight : 0);
 			ini.SetLongValue("Weights", "Level", g_settings.level.enabled ? g_settings.level.weight : 0);
+			ini.SetLongValue("Weights", "HighLevel", g_settings.highLevel.enabled ? g_settings.highLevel.weight : 0);
 			ini.SetLongValue("Weights", "Health", g_settings.health.enabled ? g_settings.health.weight : 0);
 			ini.SetLongValue("Weights", "Aidt", g_settings.aidt.enabled ? g_settings.aidt.weight : 0);
 			ini.SetLongValue("Weights", "Named", g_settings.named.enabled ? g_settings.named.weight : 0);

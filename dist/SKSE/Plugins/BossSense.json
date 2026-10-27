@@ -45,5 +45,7 @@
   "Dynamic template - this override lasts only until the game restarts.": "动态模板：该设置仅在本次游戏有效。",
   "Remove from lists": "移出名单",
   "Removed from lists: ": "已从名单移除：",
-  "Target is not in either list.": "该目标不在黑名单或白名单中。"
+  "Target is not in either list.": "该目标不在黑名单或白名单中。",
+  "High absolute level": "高绝对等级",
+  "Min level": "最低等级"
 }

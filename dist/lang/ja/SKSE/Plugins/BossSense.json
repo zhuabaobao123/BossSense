@@ -45,5 +45,7 @@
   "Dynamic template - this override lasts only until the game restarts.": "動的テンプレート — この設定はゲームを再起動するまで有効です。",
   "Remove from lists": "リストから削除",
   "Removed from lists: ": "リストから削除：",
-  "Target is not in either list.": "対象はどちらのリストにもありません。"
+  "Target is not in either list.": "対象はどちらのリストにもありません。",
+  "High absolute level": "高い絶対レベル",
+  "Min level": "最低レベル"
 }
