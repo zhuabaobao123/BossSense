@@ -152,6 +152,8 @@ namespace bosssense
 		s.race          = g_settings.race;
 		s.locRef        = g_settings.locRef;
 		s.edid          = g_settings.edid;
+		s.custom        = g_settings.custom;
+		s.notLeveled    = g_settings.notLeveled;
 		s.unique        = g_settings.unique;
 		s.level         = g_settings.level;
 		s.health        = g_settings.health;
