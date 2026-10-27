@@ -122,29 +122,75 @@ def save(img, name):
     print(f"{path}  {os.path.getsize(path) / 1024:.0f} KB")
 
 
+def boss_bar(img, x, y, w, h, pct, name, level):
+    d = ImageDraw.Draw(img)
+    glow = Image.new("RGBA", (w + 80, h + 80), (0, 0, 0, 0))
+    gd = ImageDraw.Draw(glow)
+    gd.rounded_rectangle([40, 40, 40 + w, 40 + h], radius=h // 2, fill=(190, 25, 18, 120))
+    glow = glow.filter(ImageFilter.GaussianBlur(16))
+    img.paste(glow, (x - 40, y - 40), glow)
+
+    d.rounded_rectangle([x - 3, y - 3, x + w + 3, y + h + 3], radius=h // 2 + 3, outline=GOLD_DARK, width=2)
+    d.rounded_rectangle([x, y, x + w, y + h], radius=h // 2, fill=(28, 6, 6))
+
+    # fill, clipped to the rounded bar shape
+    fw = int(w * pct)
+    layer = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    ld = ImageDraw.Draw(layer)
+    for i in range(fw):
+        t = i / max(1, fw - 1)
+        col = (int(115 + 95 * t), int(12 + 14 * t), int(10 + 10 * t), 255)
+        ld.line([(i, 0), (i, h)], fill=col)
+    mask = Image.new("L", (w, h), 0)
+    ImageDraw.Draw(mask).rounded_rectangle([0, 0, w - 1, h - 1], radius=h // 2, fill=255)
+    img.paste(layer, (x, y), mask)
+
+    f_name = font(F_TITLE, 34)
+    f_lvl = font(F_SERIF, 26)
+    d.text((x + 6, y - 52), name, font=f_name, fill=TEXT)
+    lvl_w = d.textbbox((0, 0), level, font=f_lvl)[2]
+    d.text((x + w - lvl_w - 6, y - 46), level, font=f_lvl, fill=GOLD_LIGHT)
+
+
 def header():
     img = background(1)
     d = ImageDraw.Draw(img)
-    f_top = font(F_SERIF, 28)
-    f_sub = font(F_SERIF, 46)
-    f_item = font(F_SERIF, 34)
-    f_item_sub = font(F_SERIF, 24)
+
+    aura = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    ad = ImageDraw.Draw(aura)
+    ad.ellipse([W // 2 - 700, 30, W // 2 + 700, 640], fill=(150, 20, 12, 90))
+    aura = aura.filter(ImageFilter.GaussianBlur(100))
+    img.paste(aura, (0, 0), aura)
+
+    f_top = font(F_SERIF, 26)
     f_foot = font(F_SERIF, 26)
 
-    center(d, "S K S E   P L U G I N   F O R   S K Y R I M   S E   /   A E", f_top, 108, GOLD)
+    center(d, "S K S E   P L U G I N   ·   T R U E H U D", f_top, 80, GOLD)
 
-    title_font = font(F_TITLE, 172)
+    title_font = font(F_TITLE, 176)
     bbox = title_font.getbbox("BOSS SENSE")
-    gradient_text(img, "BOSS SENSE", title_font, (W - (bbox[2] - bbox[0])) // 2, 190)
+    gradient_text(img, "BOSS SENSE", title_font, (W - (bbox[2] - bbox[0])) // 2, 160)
 
-    center(d, "Runtime boss recognition for TrueHUD", f_sub, 430, TEXT)
-    line(d, 520, 560)
+    center(d, "Every boss. No INI lists.", font(F_SERIF, 54), 420, TEXT)
+    line(d, 512, 640)
 
-    bullet(img, 430, 600, "No generated INI lists", f_item, "TrueHUD's boss list is decided at runtime", f_item_sub)
-    bullet(img, 430, 700, "No ESP  ·  no scripts  ·  no save data", f_item, "One DLL, event-driven, nothing written to your save", f_item_sub)
-    bullet(img, 430, 800, "8 languages  ·  Skyrim SE 1.5.97 + AE", f_item, "English · Chinese · Russian · Japanese · Korean · French · German · Spanish", f_item_sub)
+    boss_bar(img, 400, 600, 1120, 34, 0.72, "MOLAG BAL", "LV 85")
 
-    center(d, "TRUEHUD   ·   SKSE MENU FRAMEWORK (OPTIONAL)", f_foot, 940, MUTED)
+    tags = ["NO INI LISTS", "NO ESP", "8 LANGUAGES"]
+    tag_font = font(F_SERIF, 30)
+    widths = [d.textbbox((0, 0), t, font=tag_font)[2] for t in tags]
+    gap = 44
+    total = sum(widths) + gap * 2 * (len(tags) - 1)
+    x = (W - total) // 2
+    for i, t in enumerate(tags):
+        d.text((x, 724), t, font=tag_font, fill=GOLD_LIGHT)
+        x += widths[i] + gap
+        if i < len(tags) - 1:
+            d.polygon([(x, 739), (x + 8, 747), (x, 755), (x - 8, 747)], fill=GOLD)
+            x += gap
+
+    center(d, "DELETE EVERY BOSS INI   ·   KEEP ONLY THE REAL BOSSES", f_foot, 928, MUTED)
+    center(d, "VIGILANT  ·  LEGACY OF THE DRAGONBORN  ·  WYRMFSTOOTH  ·  ANY FUTURE QUEST MOD", font(F_SERIF, 24), 820, (150, 118, 78))
     save(img, "BossSense_01_Header.png")
 
 
