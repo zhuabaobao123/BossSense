@@ -32,20 +32,22 @@
 
 ## 判定逻辑
 
-每个敌对目标在进入战斗 / 被击中时算一次分，达到 `Threshold`（默认 80）就成为 Boss。
+每个敌对目标在进入战斗 / 被击中时算一次分，达到 `Threshold`（默认 70）就成为 Boss。
 
 | 信号 | 默认分 | 判定依据 |
 | --- | --- | --- |
 | Race | 100 | 种族在 `[Lists] BossRace` 里（龙、龙祭司、吸血鬼大君、Miraak 等） |
 | LocRef | 100 | 目标就是当前地点 `LocRefType Boss` / `DLC2Boss1` 标记的引用 |
 | Edid | 90 | NPC_ 或其 leveled 原始模板的 EditorID 含 `boss`（DLL 自己解析插件文件，不依赖运行时 EDID） |
+| CustomName | 25 | 手工命名 NPC：EditorID 不以 `Lvl`/`Enc` 开头 |
+| NotLeveled | 20 | 不是从 `Lvl...` 随机刷怪列表生成（手工放置/任务指定） |
 | Unique | 20 | NPC_ 带 Unique 标记 |
 | Level | 20 | 等级 ≥ 玩家等级 + `LevelDelta` |
 | Health | 20 | 最大生命 ≥ `HealthMin` |
 | Aidt | 10 | 侵略性 ≥ 非常激进 且 自信 = 鲁莽（原脚本的规则 B） |
 | Named | 10 | 有名字 |
 
-硬排除：玩家、死亡、随从/队友、玩家召唤物、非敌对（可关）、贫血中的 Essential。
+硬排除：玩家、死亡、随从/队友、玩家召唤物、所有召唤物、非敌对（可关）、贫血中的 Essential。
 
 > **为什么 DLL 要自己读插件文件？** Skyrim SE 运行时并不保留 EditorID，`GetFormEditorID()`
 > 默认返回空串。所以插件在 `kDataLoaded` 时只扫每个插件的 `NPC_` 组（跳过其它 GRUP，很快），
@@ -60,11 +62,15 @@
 * 每个信号的开关与权重滑条
 * 等级差、最低血量
 * 仅敌对 / 仅战斗 / 调试日志
-* **评估目标**：对当前战斗目标立刻算分并显示得分明细（调参用）
+* **目标（准星优先）→ 评估目标**：对当前准星目标（没指到就用战斗目标）立刻算分并显示明细
+* **重新判定目标**：立即清空并重算已加条的 Boss
 * **永不 Boss / 永远 Boss**：把当前目标写进黑名单 / 白名单
 * 本次游戏已添加多少条 Boss 血条
 
-改动在关闭菜单后自动写回 `BossSense.ini`。
+改动约 1.5 秒后自动写回 `BossSense.ini`，也可以点 **立即保存设置**。
+
+> 已加 Boss 条的目标每次被命中都会重算；分数掉到阈值以下会移除血条。
+> 如果不想战斗中因为「血量阈值」波动导致条消失，可以把 `[Weights] Health = 0`。
 
 ### 界面语言（I18N 外置 JSON）
 
@@ -72,14 +78,14 @@ DLL 里只有英文原文，翻译放在 DLL 同目录的 `BossSense.json`：
 
 * 有 `BossSense.json` → 按里面的词条显示中文；
 * **删掉 `BossSense.json` → 立即恢复英文**（改词条也不用重编译）；
-* 多语言包见 `dist/lang/<code>/SKSE/Plugins/BossSense.json`（目前提供 `zh-CN` 和 `en`）；
+* 多语言包见 `dist/lang/<code>/SKSE/Plugins/BossSense.json`（提供 `en`、`zh-CN`、`ru`、`ja`、`ko`、`fr`、`de`、`es`）；
   同一时刻只读 DLL 同目录那一份，切语言 = 换文件。
 
 字体由 SKSE Menu Framework 统一管理，`SKSEMenuFramework.ini` 里 `EnableChinese = true` 即可。
 
 ## INI
 
-见 `dist/SKSE/Plugins/BossSense.ini`，每一项都有注释。
+见 `dist/SKSE/Plugins/BossSense.ini`（**不含注释**，避免被游戏内菜单保存时重写掉；键名含义见上面的判定表）。
 
 `[Lists]` 里用 `Plugin.esp:0xFORMID` 的写法加白名单/黑名单：
 
