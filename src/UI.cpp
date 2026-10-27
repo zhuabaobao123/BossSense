@@ -169,13 +169,13 @@ namespace bosssense::ui
 						text = std::string(target->GetName() ? target->GetName() : "?") + "  " + _T("not hostile - ignored");
 					} else {
 						const auto decision = BossManager::Get().EvaluateOnly(target);
-						text = DescribeTarget(target, decision.boss, decision.score, decision.threshold, decision.edid, decision);
+						text = DescribeTarget(target, decision.score >= decision.threshold, decision.score, decision.threshold, decision.edid, decision);
 					}
 				} else if (action == PendingAction::kReevaluate) {
 					BossManager::Get().ReevaluateAll();
 					BossManager::Get().ConsiderNow(target);
 					const auto decision = BossManager::Get().EvaluateOnly(target);
-					text = DescribeTarget(target, decision.boss, decision.score, decision.threshold, decision.edid, decision);
+					text = DescribeTarget(target, decision.score >= decision.threshold, decision.score, decision.threshold, decision.edid, decision);
 				} else if (action == PendingAction::kRemoveFromLists) {
 					std::vector<RE::FormID> ids;
 					if (auto* base = target->GetActorBase()) {

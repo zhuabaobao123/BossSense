@@ -118,8 +118,12 @@ namespace bosssense
 		const auto snapshot = MakeSnapshot();
 		auto decision = Evaluate(a_actor);
 
+		// Use the same score/threshold pair for the decision and the log, so the two can never
+		// disagree (the log used to call a kept 120-point boss a "skip 120 < 70").
+		const bool isBoss = decision.score >= decision.threshold && decision.threshold > 0;
+
 		const bool debug = snapshot.debugLog;
-		if (debug || (decision.boss && !alreadyAdded) || (!decision.boss && alreadyAdded)) {
+		if (isBoss && !alreadyAdded) {
 			std::string reasons;
 			for (int i = 0; i < decision.hitCount; ++i) {
 				if (!reasons.empty()) {
@@ -127,22 +131,34 @@ namespace bosssense
 				}
 				reasons += decision.hits[i].name;
 			}
-
-			const char* name = decision.name.empty() ? "<unnamed>" : decision.name.c_str();
-			if (decision.boss && !alreadyAdded) {
-				SKSE::log::info("boss +{} [{:08X}] base={:08X} {} ({}): {}", decision.score, formID, decision.baseID, name,
-					decision.edid.empty() ? "-" : decision.edid.c_str(), reasons);
-			} else if (!decision.boss && alreadyAdded) {
-				SKSE::log::info("boss -{} [{:08X}] base={:08X} {}: score {} < {} ({})", decision.score, formID, decision.baseID, name,
-					decision.score, decision.threshold, reasons.empty() ? "no signal" : reasons.c_str());
-			} else if (debug) {
-				SKSE::log::info("skip {} [{:08X}] base={:08X} {}: score {} < {} ({})", name, formID, decision.baseID,
-					decision.edid.empty() ? "-" : decision.edid.c_str(), decision.score,
-					decision.threshold, reasons.empty() ? "no signal" : reasons.c_str());
+			SKSE::log::info("boss +{} [{:08X}] base={:08X} {} ({}): {}", decision.score, formID, decision.baseID,
+				decision.name.empty() ? "<unnamed>" : decision.name.c_str(),
+				decision.edid.empty() ? "-" : decision.edid.c_str(), reasons);
+		} else if (!isBoss && alreadyAdded) {
+			std::string reasons;
+			for (int i = 0; i < decision.hitCount; ++i) {
+				if (!reasons.empty()) {
+					reasons += "+";
+				}
+				reasons += decision.hits[i].name;
 			}
+			SKSE::log::info("boss -{} [{:08X}] base={:08X} {}: score {} < {} ({})", decision.score, formID, decision.baseID,
+				decision.name.empty() ? "<unnamed>" : decision.name.c_str(), decision.score, decision.threshold,
+				reasons.empty() ? "no signal" : reasons.c_str());
+		} else if (debug && !isBoss) {
+			std::string reasons;
+			for (int i = 0; i < decision.hitCount; ++i) {
+				if (!reasons.empty()) {
+					reasons += "+";
+				}
+				reasons += decision.hits[i].name;
+			}
+			SKSE::log::info("skip {} [{:08X}] base={:08X} {}: score {} < {} ({})", decision.name.empty() ? "<unnamed>" : decision.name.c_str(),
+				formID, decision.baseID, decision.edid.empty() ? "-" : decision.edid.c_str(), decision.score,
+				decision.threshold, reasons.empty() ? "no signal" : reasons.c_str());
 		}
 
-		if (!decision.boss) {
+		if (!isBoss) {
 			if (alreadyAdded) {
 				truehud::RemoveBoss(a_actor);
 				m_added.erase(formID);
