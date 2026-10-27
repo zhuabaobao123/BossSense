@@ -42,5 +42,8 @@
   "=> BOSS": "=> ボス",
   "=> not boss": "=> ボスではない",
   "score": "スコア",
-  "Dynamic template - this override lasts only until the game restarts.": "動的テンプレート — この設定はゲームを再起動するまで有効です。"
+  "Dynamic template - this override lasts only until the game restarts.": "動的テンプレート — この設定はゲームを再起動するまで有効です。",
+  "Remove from lists": "リストから削除",
+  "Removed from lists: ": "リストから削除：",
+  "Target is not in either list.": "対象はどちらのリストにもありません。"
 }

@@ -42,5 +42,8 @@
   "=> BOSS": "=> BOSS",
   "=> not boss": "=> kein Boss",
   "score": "Punktzahl",
-  "Dynamic template - this override lasts only until the game restarts.": "Dynamische Vorlage — diese Einstellung gilt nur bis zum Neustart des Spiels."
+  "Dynamic template - this override lasts only until the game restarts.": "Dynamische Vorlage — diese Einstellung gilt nur bis zum Neustart des Spiels.",
+  "Remove from lists": "Aus Listen entfernen",
+  "Removed from lists: ": "Aus Listen entfernt: ",
+  "Target is not in either list.": "Das Ziel steht in keiner Liste."
 }

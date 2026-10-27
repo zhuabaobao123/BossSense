@@ -27,6 +27,7 @@ namespace bosssense::ui
 			kTest,
 			kBlacklist,
 			kWhitelist,
+			kRemoveFromLists,
 			kReevaluate
 		};
 
@@ -50,6 +51,26 @@ namespace bosssense::ui
 			std::snprintf(buffer, sizeof(buffer), "%.*s:0x%06X",
 				static_cast<int>(file->GetFilename().size()), file->GetFilename().data(), local);
 			return buffer;
+		}
+
+		RE::FormID ResolveEntry(const std::string& a_entry)
+		{
+			const auto split = a_entry.find(':');
+			if (split == std::string::npos) {
+				return 0;
+			}
+			auto* dataHandler = RE::TESDataHandler::GetSingleton();
+			if (!dataHandler) {
+				return 0;
+			}
+			RE::FormID local = 0;
+			try {
+				local = static_cast<RE::FormID>(std::stoul(a_entry.substr(split + 1), nullptr, 0));
+			} catch (...) {
+				return 0;
+			}
+			auto* form = dataHandler->LookupForm(local, a_entry.substr(0, split));
+			return form ? form->GetFormID() : 0;
 		}
 
 		/// Dynamic templates (FFxxxxxx) have no plugin file, so fall back to the leveled
@@ -155,6 +176,41 @@ namespace bosssense::ui
 					BossManager::Get().ConsiderNow(target);
 					const auto decision = BossManager::Get().EvaluateOnly(target);
 					text = DescribeTarget(target, decision.boss, decision.score, decision.threshold, decision.edid, decision);
+				} else if (action == PendingAction::kRemoveFromLists) {
+					std::vector<RE::FormID> ids;
+					if (auto* base = target->GetActorBase()) {
+						ids.push_back(base->GetFormID());
+					}
+					if (auto* extra = static_cast<RE::ExtraLeveledCreature*>(
+							target->extraList.GetByType(RE::ExtraDataType::kLeveledCreature))) {
+						if (extra->originalBase) {
+							ids.push_back(extra->originalBase->GetFormID());
+						}
+						if (extra->templateBase) {
+							ids.push_back(extra->templateBase->GetFormID());
+						}
+					}
+
+					std::lock_guard lock(SettingsMutex());
+					auto& cfg = MutableSettings();
+					int removed = 0;
+					for (const auto id : ids) {
+						removed += static_cast<int>(cfg.blacklist.erase(id));
+						removed += static_cast<int>(cfg.whitelist.erase(id));
+					}
+					auto eraseRaw = [&](std::vector<std::string>& a_raw) {
+						std::erase_if(a_raw, [&](const std::string& entry) {
+							const auto id = ResolveEntry(entry);
+							return id != 0 && std::find(ids.begin(), ids.end(), id) != ids.end();
+						});
+					};
+					eraseRaw(cfg.blacklistForms);
+					eraseRaw(cfg.whitelistForms);
+					cfg.dirty = true;
+
+					text = removed > 0
+						? std::string(_T("Removed from lists: ")) + std::to_string(removed)
+						: _T("Target is not in either list.");
 				} else {
 					auto* form = PersistentBase(target);
 					const auto entry = FormEntry(form);
@@ -264,6 +320,10 @@ namespace bosssense::ui
 			ImGui::SameLine();
 			if (ImGui::Button(_T("Always boss"))) {
 				g_pendingAction = static_cast<int>(PendingAction::kWhitelist);
+			}
+			ImGui::SameLine();
+			if (ImGui::Button(_T("Remove from lists"))) {
+				g_pendingAction = static_cast<int>(PendingAction::kRemoveFromLists);
 			}
 
 			{

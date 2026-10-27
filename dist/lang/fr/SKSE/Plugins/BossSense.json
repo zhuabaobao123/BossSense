@@ -42,5 +42,8 @@
   "=> BOSS": "=> BOSS",
   "=> not boss": "=> pas boss",
   "score": "score",
-  "Dynamic template - this override lasts only until the game restarts.": "Modèle dynamique — ce réglage ne dure que jusqu au redémarrage du jeu."
+  "Dynamic template - this override lasts only until the game restarts.": "Modèle dynamique — ce réglage ne dure que jusqu au redémarrage du jeu.",
+  "Remove from lists": "Retirer des listes",
+  "Removed from lists: ": "Retiré des listes : ",
+  "Target is not in either list.": "La cible n est dans aucune liste."
 }
