@@ -47,5 +47,10 @@
   "Removed from lists: ": "목록에서 제거됨: ",
   "Target is not in either list.": "대상이 어느 목록에도 없습니다.",
   "High absolute level": "높은 절대 레벨",
-  "Min level": "최소 레벨"
+  "Min level": "최소 레벨",
+  "Distribution": "분배",
+  "Give items to bosses": "보스에게 아이템 지급",
+  "Give spells to bosses": "보스에게 주문 지급",
+  "Give perks to bosses": "보스에게 퍽 지급",
+  "Entries are read from [Distribution] in BossSense.ini. Nothing is taken back.": "항목은 BossSense.ini의 [Distribution]에서 설정합니다. 지급한 것은 회수하지 않습니다."
 }

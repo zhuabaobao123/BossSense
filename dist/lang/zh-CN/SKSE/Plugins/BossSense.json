@@ -47,5 +47,10 @@
   "Removed from lists: ": "已从名单移除：",
   "Target is not in either list.": "该目标不在黑名单或白名单中。",
   "High absolute level": "高绝对等级",
-  "Min level": "最低等级"
+  "Min level": "最低等级",
+  "Distribution": "发放",
+  "Give items to bosses": "给 Boss 发放物品",
+  "Give spells to bosses": "给 Boss 发放法术",
+  "Give perks to bosses": "给 Boss 发放专长",
+  "Entries are read from [Distribution] in BossSense.ini. Nothing is taken back.": "条目在 BossSense.ini 的 [Distribution] 段中配置，已经发出的不会收回。"
 }

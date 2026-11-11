@@ -6,6 +6,7 @@
 #include "BossManager.h"
 #include "Config.h"
 #include "Detector.h"
+#include "Distribution.h"
 #include "Localization.h"
 #include "PluginScanner.h"
 #include "TrueHUD.h"
@@ -47,6 +48,7 @@ namespace
 			SKSE::log::info("data loaded: loading settings and scanning plugins");
 			bosssense::LoadSettings();
 			bosssense::ResolveFormLists();
+			bosssense::distribution::Init();
 			bosssense::InitDetectorForms();
 			bosssense::scanner::ScanAll();
 			bosssense::BossManager::Get().Register();
@@ -71,7 +73,7 @@ SKSEPluginLoad(const SKSE::LoadInterface* a_skse)
 	SetupLog();
 	SKSE::Init(a_skse, SKSE::InitInfo{ .log = false });
 
-	SKSE::log::info("BossSense 1.0.0 loading");
+	SKSE::log::info("BossSense 1.0.4 loading");
 
 	auto* messaging = SKSE::GetMessagingInterface();
 	if (!messaging) {

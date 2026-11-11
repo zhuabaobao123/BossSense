@@ -47,5 +47,10 @@
   "Removed from lists: ": "Удалено из списков: ",
   "Target is not in either list.": "Цель отсутствует в обоих списках.",
   "High absolute level": "Высокий абсолютный уровень",
-  "Min level": "Мин. уровень"
+  "Min level": "Мин. уровень",
+  "Distribution": "Раздача",
+  "Give items to bosses": "Выдавать боссам предметы",
+  "Give spells to bosses": "Выдавать боссам заклинания",
+  "Give perks to bosses": "Выдавать боссам перки",
+  "Entries are read from [Distribution] in BossSense.ini. Nothing is taken back.": "Записи задаются в разделе [Distribution] файла BossSense.ini. Выданное не отбирается."
 }

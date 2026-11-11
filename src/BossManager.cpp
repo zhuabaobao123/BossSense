@@ -2,6 +2,7 @@
 
 #include "Config.h"
 #include "Detector.h"
+#include "Distribution.h"
 #include "TrueHUD.h"
 
 #include <SKSE/SKSE.h>
@@ -174,6 +175,7 @@ namespace bosssense
 		if (truehud::Available()) {
 			truehud::AddBoss(a_actor);
 		}
+		distribution::Give(a_actor, snapshot.distributeItems, snapshot.distributeSpells, snapshot.distributePerks);
 		++m_sessionCount;
 
 		std::lock_guard lock(m_summaryMutex);

@@ -27,10 +27,10 @@ namespace bosssense
 			return a_s.substr(first, last - first + 1);
 		}
 
-		void ReadList(CSimpleIniA& a_ini, const char* a_key, std::vector<std::string>& a_out)
+		void ReadList(CSimpleIniA& a_ini, const char* a_section, const char* a_key, std::vector<std::string>& a_out)
 		{
 			CSimpleIniA::TNamesDepend values;
-			a_ini.GetAllValues("Lists", a_key, values);
+			a_ini.GetAllValues(a_section, a_key, values);
 			for (const auto& v : values) {
 				auto text = Trim(v.pItem ? v.pItem : "");
 				if (!text.empty()) {
@@ -39,11 +39,11 @@ namespace bosssense
 			}
 		}
 
-		void WriteList(CSimpleIniA& a_ini, const char* a_key, const std::vector<std::string>& a_list)
+		void WriteList(CSimpleIniA& a_ini, const char* a_section, const char* a_key, const std::vector<std::string>& a_list)
 		{
-			a_ini.Delete("Lists", a_key, true);
+			a_ini.Delete(a_section, a_key, true);
 			for (const auto& entry : a_list) {
-				a_ini.SetValue("Lists", a_key, entry.c_str(), nullptr, false);
+				a_ini.SetValue(a_section, a_key, entry.c_str(), nullptr, false);
 			}
 		}
 
@@ -114,11 +114,22 @@ namespace bosssense
 			g_settings.raceForms.clear();
 			g_settings.blacklistForms.clear();
 			g_settings.whitelistForms.clear();
-			ReadList(ini, "BossRace", g_settings.raceForms);
-			ReadList(ini, "Blacklist", g_settings.blacklistForms);
-			ReadList(ini, "Whitelist", g_settings.whitelistForms);
-			ReadList(ini, "RemoveBlacklist", g_settings.removeBlacklistForms);
-			ReadList(ini, "RemoveWhitelist", g_settings.removeWhitelistForms);
+			ReadList(ini, "Lists", "BossRace", g_settings.raceForms);
+			ReadList(ini, "Lists", "Blacklist", g_settings.blacklistForms);
+			ReadList(ini, "Lists", "Whitelist", g_settings.whitelistForms);
+			ReadList(ini, "Lists", "RemoveBlacklist", g_settings.removeBlacklistForms);
+			ReadList(ini, "Lists", "RemoveWhitelist", g_settings.removeWhitelistForms);
+
+			g_settings.distributeItems  = ini.GetBoolValue("Distribution", "ItemEnabled", g_settings.distributeItems);
+			g_settings.distributeSpells = ini.GetBoolValue("Distribution", "SpellEnabled", g_settings.distributeSpells);
+			g_settings.distributePerks  = ini.GetBoolValue("Distribution", "PerkEnabled", g_settings.distributePerks);
+
+			g_settings.itemForms.clear();
+			g_settings.spellForms.clear();
+			g_settings.perkForms.clear();
+			ReadList(ini, "Distribution", "BossItem", g_settings.itemForms);
+			ReadList(ini, "Distribution", "BossSpell", g_settings.spellForms);
+			ReadList(ini, "Distribution", "BossPerk", g_settings.perkForms);
 
 			if (g_settings.raceForms.empty()) {
 				Settings defaults;
@@ -163,6 +174,9 @@ namespace bosssense
 		s.health        = g_settings.health;
 		s.aidt          = g_settings.aidt;
 		s.named         = g_settings.named;
+		s.distributeItems  = g_settings.distributeItems;
+		s.distributeSpells = g_settings.distributeSpells;
+		s.distributePerks  = g_settings.distributePerks;
 		s.bossRaces     = g_settings.bossRaces;
 		s.blacklist     = g_settings.blacklist;
 		s.whitelist     = g_settings.whitelist;
@@ -205,11 +219,18 @@ namespace bosssense
 			ini.SetLongValue("Weights", "CustomName", g_settings.custom.enabled ? g_settings.custom.weight : 0);
 			ini.SetLongValue("Weights", "NotLeveled", g_settings.notLeveled.enabled ? g_settings.notLeveled.weight : 0);
 
-			WriteList(ini, "BossRace", g_settings.raceForms);
-			WriteList(ini, "Blacklist", g_settings.blacklistForms);
-			WriteList(ini, "Whitelist", g_settings.whitelistForms);
-			WriteList(ini, "RemoveBlacklist", g_settings.removeBlacklistForms);
-			WriteList(ini, "RemoveWhitelist", g_settings.removeWhitelistForms);
+			WriteList(ini, "Lists", "BossRace", g_settings.raceForms);
+			WriteList(ini, "Lists", "Blacklist", g_settings.blacklistForms);
+			WriteList(ini, "Lists", "Whitelist", g_settings.whitelistForms);
+			WriteList(ini, "Lists", "RemoveBlacklist", g_settings.removeBlacklistForms);
+			WriteList(ini, "Lists", "RemoveWhitelist", g_settings.removeWhitelistForms);
+
+			ini.SetBoolValue("Distribution", "ItemEnabled", g_settings.distributeItems);
+			ini.SetBoolValue("Distribution", "SpellEnabled", g_settings.distributeSpells);
+			ini.SetBoolValue("Distribution", "PerkEnabled", g_settings.distributePerks);
+			WriteList(ini, "Distribution", "BossItem", g_settings.itemForms);
+			WriteList(ini, "Distribution", "BossSpell", g_settings.spellForms);
+			WriteList(ini, "Distribution", "BossPerk", g_settings.perkForms);
 
 			std::error_code ec;
 			std::filesystem::create_directories(std::filesystem::path(kConfigPath).parent_path(), ec);

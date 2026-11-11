@@ -40,7 +40,15 @@ namespace bosssense
 		Signal custom{ true, 25 };
 		Signal notLeveled{ true, 20 };
 
+		// [Distribution] - hand an item, spell or perk to an actor accepted as a boss.
+		bool distributeItems = false;
+		bool distributeSpells = false;
+		bool distributePerks = false;
+
 		// Raw config text, kept verbatim so a save never loses what the user wrote.
+		std::vector<std::string> itemForms;
+		std::vector<std::string> spellForms;
+		std::vector<std::string> perkForms;
 		std::vector<std::string> raceForms;
 		std::vector<std::string> blacklistForms;
 		std::vector<std::string> whitelistForms;
@@ -78,6 +86,10 @@ namespace bosssense
 		Signal named;
 		Signal custom;
 		Signal notLeveled;
+
+		bool distributeItems = false;
+		bool distributeSpells = false;
+		bool distributePerks = false;
 
 		std::unordered_set<RE::FormID> bossRaces;
 		std::unordered_set<RE::FormID> blacklist;

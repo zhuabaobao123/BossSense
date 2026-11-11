@@ -47,5 +47,10 @@
   "Removed from lists: ": "リストから削除：",
   "Target is not in either list.": "対象はどちらのリストにもありません。",
   "High absolute level": "高い絶対レベル",
-  "Min level": "最低レベル"
+  "Min level": "最低レベル",
+  "Distribution": "配布",
+  "Give items to bosses": "ボスにアイテムを渡す",
+  "Give spells to bosses": "ボスに呪文を渡す",
+  "Give perks to bosses": "ボスにパークを渡す",
+  "Entries are read from [Distribution] in BossSense.ini. Nothing is taken back.": "項目は BossSense.ini の [Distribution] で設定します。渡したものは取り戻しません。"
 }

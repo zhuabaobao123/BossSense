@@ -62,6 +62,7 @@
 * 每个信号的开关与权重滑条
 * 等级差、最低血量
 * 仅敌对 / 仅战斗 / 调试日志
+* **发放**：给判定为 Boss 的目标发放物品 / 法术 / 专长（默认全关，条目在 INI 的 `[Distribution]` 段）
 * **目标（准星优先）→ 评估目标**：对当前准星目标（没指到就用战斗目标）立刻算分并显示明细
 * **重新判定目标**：立即清空并重算已加条的 Boss
 * **永不 Boss / 永远 Boss**：把当前目标写进黑名单 / 白名单
@@ -104,6 +105,23 @@ RemoveBlacklist = SomeMod.esp:0x001234
 RemoveWhitelist = SomeMod.esp:0x005678
 ```
 
+`[Distribution]` 给判定为 Boss 的 actor 发放物品 / 法术 / 专长（默认全关，填了也要开关打开才生效）：
+
+```ini
+[Distribution]
+ItemEnabled = 1
+SpellEnabled = 0
+PerkEnabled = 0
+BossItem = SomeMod.esp:0x0012AB|2
+BossSpell = Skyrim.esm:0x00012FCC
+BossPerk = Skyrim.esm:0x00012FC9
+```
+
+* 物品可写 `|数量`，省略即 1；法术 / 专长写 FormID 即可。
+* **只发不收**：判定掉下去、被拉黑、读档重进都不会把已经发出去的东西拿回来。
+* 发放前会检查目标是否已有该物品 / 法术 / 专长，已有就不重复叠加（读旧档也不会多给一份）。
+* 这些改动会进存档，所以默认关闭；不需要就把三个开关留在 0。
+
 ## 从旧版迁移
 
 旧的 `TrueHUD_missing_bosses.ini` 里那一千多条是"EDID 含 Boss + AIDT"的并集，
@@ -114,17 +132,23 @@ TrueHUD 自带的原版 Boss 名单（龙、龙祭司、地点 Boss 等）仍然
 
 ```powershell
 $env:VCPKG_ROOT = "E:\vcpkg"   # 本机；换成你自己的 vcpkg 路径
-cmake -B build -S . -G "Visual Studio 18 2026" -A x64 `
-  -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" `
-  -DVCPKG_TARGET_TRIPLET=x64-windows-static-md
-cmake --build build --config Release
+cmd /c "call `"D:\Microsoft Visual Studio\2026\Community\VC\Auxiliary\Build\vcvars64.bat`" && cmake -B build-ninja -S . -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=E:/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows-static-md -DVCPKG_HOST_TRIPLET=x64-windows-static-md"
+cmake --build build-ninja
 ```
 
-产物：`build/Release/BossSense.dll`（+ `.pdb`）。
+产物：`build-ninja/BossSense.dll`（+ `.pdb`）。旧的 Visual Studio 生成器写法 `build.ps1` 也能用，
+前提是 CMake 能找到那台机器上安装的 VS 18 实例。
 
 依赖：CommonLibSSE-NG `ng` 分支（默认用 `E:\CommonLibSSE-NG-alandtse`，不存在时回退到
 `lib/commonlibsse-ng`；也可用 `COMMONLIB_SSE_FOLDER` 环境变量指定）、vcpkg manifest 模式
 （`vcpkg.json` 已列出依赖，`VCPKG_ROOT=E:\vcpkg`，triplet `x64-windows-static-md`）。
+
+## 更新日志
+
+* **1.0.4**：新增 `[Distribution]`，判定为 Boss 时可发放物品 / 法术 / 专长（默认关闭，菜单里三项独立开关）。只发不收，发放前查重，读档不会重复给。
+* **1.0.3**：FOMOD 选项名改为纯 ASCII，语言安装改成逐文件 `<file>`，`<typeDescriptor>` 补齐，通过官方 `ModConfig5.0.xsd` 校验（修 Vortex 的 Invalid FOMOD）。
+* **1.0.2**：FOMOD 去掉空 `destination`。
+* **1.0.0**：首个版本。
 
 ## License
 

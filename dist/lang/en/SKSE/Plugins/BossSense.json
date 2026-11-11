@@ -47,5 +47,10 @@
   "Removed from lists: ": "Removed from lists: ",
   "Target is not in either list.": "Target is not in either list.",
   "High absolute level": "High absolute level",
-  "Min level": "Min level"
+  "Min level": "Min level",
+  "Distribution": "Distribution",
+  "Give items to bosses": "Give items to bosses",
+  "Give spells to bosses": "Give spells to bosses",
+  "Give perks to bosses": "Give perks to bosses",
+  "Entries are read from [Distribution] in BossSense.ini. Nothing is taken back.": "Entries are read from [Distribution] in BossSense.ini. Nothing is taken back."
 }

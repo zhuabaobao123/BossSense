@@ -322,6 +322,13 @@ namespace bosssense::ui
 				changed |= ImGui::Checkbox(_T("Write debug log"), &s.debugLog);
 			}
 
+			if (ImGui::CollapsingHeader(_T("Distribution"))) {
+				changed |= ImGui::Checkbox(_T("Give items to bosses"), &s.distributeItems);
+				changed |= ImGui::Checkbox(_T("Give spells to bosses"), &s.distributeSpells);
+				changed |= ImGui::Checkbox(_T("Give perks to bosses"), &s.distributePerks);
+				ImGui::TextWrapped("%s", _T("Entries are read from [Distribution] in BossSense.ini. Nothing is taken back."));
+			}
+
 			ImGui::Separator();
 			ImGui::TextUnformatted(_T("Target (crosshair first)"));
 
